@@ -17,10 +17,11 @@ map <C-A-k> :resize +4<CR>
 map <C-A-j> :resize .4<CR>
 
 " Telescope
-nnoremap <leader>ff <cmd>Telescope find_files<CR>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fg <cmd>Telescope git_files<cr>
+map <C-p> <cmd>Telescope git_files<cr>
 
 " LSP commands
 map <leader>lf :LspZeroFormat<CR>

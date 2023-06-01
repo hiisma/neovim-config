@@ -1,4 +1,4 @@
-set number relativenumber
+et number relativenumber
 set nu rnu
 
 " Shortcuts
@@ -7,7 +7,6 @@ let mapleader = " "
 " Misc
 map <leader>h :noh<CR>
 map <leader>e :NERDTreeToggle<CR>
-map <leader>q :q<CR>
 map <leader>w :w<CR>
 
 " Resize
@@ -33,27 +32,49 @@ set softtabstop=2
 set expandtab
 set cursorline
 
+" Buffer commands
+" Goto buffer in position...
+nnoremap <silent>    <A-1> <Cmd>BufferGoto 1<CR>
+nnoremap <silent>    <A-2> <Cmd>BufferGoto 2<CR>
+nnoremap <silent>    <A-3> <Cmd>BufferGoto 3<CR>
+nnoremap <silent>    <A-4> <Cmd>BufferGoto 4<CR>
+nnoremap <silent>    <A-5> <Cmd>BufferGoto 5<CR>
+nnoremap <silent>    <A-6> <Cmd>BufferGoto 6<CR>
+nnoremap <silent>    <A-7> <Cmd>BufferGoto 7<CR>
+nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
+nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
+nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
+nnoremap <silent>    <leader>q <Cmd>BufferClose<CR>
+nnoremap <silent>    <leader>th <Cmd>BufferPrevious<CR>
+nnoremap <silent>    <leader>tl <Cmd>BufferNext<CR>
+
 " autocmd FileType * set tabstop=2|set shiftwidth=2|set noexpandtab
 
 call plug#begin()
 " Themes
 Plug 'navarasu/onedark.nvim'
-Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-lualine/lualine.nvim'
+Plug 'xiyaowong/transparent.nvim'
+Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
+Plug 'nvim-tree/nvim-web-devicons' " OPTIONAL: for file icons
+Plug 'romgrk/barbar.nvim'
 
 " Misc.
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
 Plug 'BurntSushi/ripgrep'
+Plug 'preservim/nerdtree'
 
 " LSP extras
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'othree/html5.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'evanleck/vim-svelte', {'branch': 'main'}
 Plug 'raimondi/delimitmate'
 
 " Auto complete LSP
+Plug 'LhKipp/nvim-nu', {'do': ':TSInstall nu'}
 Plug 'VonHeikemen/lsp-zero.nvim'
 Plug 'williamboman/mason.nvim', {'do': ':MasonUpdate'} " Optional
 Plug 'williamboman/mason-lspconfig.nvim'               " Optional
@@ -72,6 +93,9 @@ call plug#end()
 colorscheme onedark
 set background=light
 
+let g:NERDTreeDirArrowExpandable = ''
+let g:NERDTreeDirArrowCollapsible = ''
+
 " LSP SERVER CONFIG
 lua <<EOF
   -- Set up nvim-cmp.
@@ -81,6 +105,16 @@ lua <<EOF
     return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
   end
   
+  require'nu'.setup{
+    use_lsp_features = false, -- requires https://github.com/jose-elias-alvarez/null-ls.nvim
+    -- lsp_feature: all_cmd_names is the source for the cmd name completion.
+    -- It can be
+    --  * a string, which is interpreted as a shell command and the returned list is the source for completions (requires plenary.nvim)
+    --  * a list, which is the direct source for completions (e.G. all_cmd_names = {"echo", "to csv", ...})
+    --  * a function, returning a list of strings and the return value is used as the source for completions
+    all_cmd_names = [[nu -c 'help commands | get name | str join "\n"']]
+}
+
   require('telescope').setup{
   defaults = {
     vimgrep_arguments = {
